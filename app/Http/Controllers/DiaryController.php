@@ -43,14 +43,6 @@ class DiaryController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Diary $diary)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Diary $diary)

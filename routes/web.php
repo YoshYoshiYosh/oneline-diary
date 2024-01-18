@@ -14,4 +14,4 @@ use App\Http\Controllers\DiaryController;
 |
 */
 Route::redirect('/', '/diaries/create');
-Route::resource('diaries', DiaryController::class);
+Route::resource('diaries', DiaryController::class)->except(['show']);
