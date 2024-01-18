@@ -17,7 +17,7 @@
             <h2 for="diary-content" class="form-label">今日の一行日記</h2>
         </div>
         <div class="mb-3">
-            <textarea id="diary-content" name="content" rows="4" maxlength="255" class="form-control" placeholder="日記をここに書きましょう！"></textarea>
+            <textarea id="diary-content" name="content" rows="2" maxlength="255" class="form-control w-50" placeholder="日記をここに書きましょう！"></textarea>
         </div>
         <div class="mb-3">
             <input type="file" id="diary-image" class="form-control wid-350" accept="image/jpeg, image/jpg">
