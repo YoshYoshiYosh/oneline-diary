@@ -38,6 +38,11 @@ class DiaryTest extends TestCase
         $response->assertRedirect('/diaries/create');
         $response->assertSessionHas('success', '日記を保存しました！');
         $this->assertCount(1, Diary::all());
+
+        // ファイルの存在を確認
+        $diary = Diary::first();
+        $filePath = "diary_images/{$diary->id}/image.jpg";
+        $this->assertTrue(Storage::disk('public')->exists($filePath));
     }
 
     public function testCreateNewDiaryFailure()
@@ -77,4 +82,55 @@ class DiaryTest extends TestCase
         $diariesOnSecondPage = $response->viewData('diaries')->items();
         $this->assertCount(3, $diariesOnSecondPage);
     }
+
+    public function testUpdateDiary()
+    {
+        Storage::fake('public');
+
+        $response = $this->post('/diaries', [
+            'content' => 'This is a test diary entry.',
+            'imageBase64' => base64_encode(UploadedFile::fake()->image('image.jpg')->size(100))
+        ]);
+
+        $diary = Diary::first();
+    
+        $response = $this->put("/diaries/{$diary->id}", [
+            'id' => $diary->id,
+            'content' => 'Updated content',
+            'imageBase64' => ""
+        ]);
+    
+        $response->assertSessionHas('success', '日記を編集しました！');
+        $this->assertEquals('Updated content', Diary::find($diary->id)->content);
+    }
+    
+    public function testUpdateDiaryWithImageRemoval()
+    {
+        Storage::fake('public');
+
+        $response = $this->post('/diaries', [
+            'content' => 'This is a test diary entry.',
+            'imageBase64' => base64_encode(UploadedFile::fake()->image('image.jpg')->size(100))
+        ]);
+
+        $diary = Diary::first();
+
+        // ファイルが存在することを確認
+        $filePath = "diary_images/{$diary->id}/image.jpg";
+        $this->assertTrue(Storage::disk('public')->exists($filePath));
+    
+        $response = $this->put("/diaries/{$diary->id}", [
+            'id' => $diary->id,
+            'content' => $diary->content,
+            'imageBase64' => '',
+            'willRemove' => 'true'
+        ]);
+    
+        $response->assertSessionHas('success', '日記を編集しました！');
+
+        // ファイルが存在しないことを確認
+        $diary = Diary::first();
+        $this->assertFalse(Storage::disk('public')->exists($filePath));
+    }
+    
 }

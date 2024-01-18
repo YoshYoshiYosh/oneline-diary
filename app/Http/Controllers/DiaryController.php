@@ -55,15 +55,32 @@ class DiaryController extends Controller
      */
     public function edit(Diary $diary)
     {
-        //
-    }
+        $imageExists = $diary->hasImage();
+        return view('diaries.edit', compact('diary', 'imageExists'));
+    }    
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Diary $diary)
     {
-        //
+        $validatedData = $request->validate([
+            'id' => 'required',
+            'content' => 'required|max:255',
+            'imageBase64' => 'string|nullable',
+            'willRemove' => 'nullable'
+        ]);
+    
+        $isSuccessed = Diary::updateDiary($validatedData);
+    
+        // 処理結果メッセージを変数に代入する
+        if ($isSuccessed) {
+            $request->session()->flash('success', '日記を編集しました！');
+        } else {
+            $request->session()->flash('error', '日記の編集に失敗しました。');
+        }
+    
+        return back();
     }
 
     /**

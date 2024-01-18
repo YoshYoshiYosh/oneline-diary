@@ -9,6 +9,7 @@
         <div class="mb-4 bg-gray py-3 px-4 rounded">
             <div class="mb-2">
                 <span>{{ $diary->created_at }}</span>
+                <a class="btn-dark-yellow p-1 px-2 ml-2" href="{{ route('diaries.edit', $diary) }}">編集</a>
             </div>
             <div class="diary-entry">
                 <img 

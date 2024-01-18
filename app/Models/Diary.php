@@ -32,7 +32,7 @@ class Diary extends Model
             if (!$newDiary) throw new \Exception("Diary creation failed");
     
             // 画像データが添付されている場合のみ、画像ファイルを保存する
-            if ($postData['imageBase64']) self::saveImageFile($newDiary->id, $postData['imageBase64']);
+            if ($postData['imageBase64']) $newDiary->saveImageFile($postData['imageBase64']);
     
             DB::commit();
 
@@ -45,9 +45,40 @@ class Diary extends Model
         }
     }
 
-    public static function saveImageFile(int $diaryId, string $imageBase64)
+    public static function updateDiary(array $postData)
     {
-        $directory = "diary_images/{$diaryId}";
+        DB::beginTransaction();
+        
+        try {
+            $targetDiary = self::find($postData["id"]);
+    
+            if (!$targetDiary) throw new \Exception("Diary update failed");
+
+            $targetDiary->content = $postData["content"];
+
+            $targetDiary->save();
+    
+            // 画像データが添付されている場合のみ、画像ファイルを保存する
+            if ($postData['imageBase64']) {
+                $targetDiary->saveImageFile($postData['imageBase64']);
+            } else if (isset($postData['willRemove'])) {
+                $targetDiary->deleteImageFile();
+            }
+    
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Error at updateDiary: " . $e->getMessage());
+            DB::rollBack();
+            
+            return false;
+        }
+    }
+
+    public function saveImageFile(string $imageBase64)
+    {
+        $directory = "diary_images/{$this->id}";
     
         // メタデータを削除して、画像ファイルに変換
         $imageBase64RemovedMeta = substr($imageBase64, strpos($imageBase64, ',') + 1);
@@ -56,10 +87,22 @@ class Diary extends Model
         Storage::disk('public')->put("{$directory}/image.jpg", $imageData);
     }
 
+    public function deleteImageFile()
+    {
+        $directory = "diary_images/{$this->id}";
+    
+        // 指定されたディレクトリの画像ファイルを削除
+        Storage::disk('public')->delete("{$directory}/image.jpg");
+    }
+
     protected $dates = ['created_at', 'updated_at'];
 
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y/m/d H:i');
+    }
+
+    public function hasImage() {
+        return Storage::disk('public')->exists('diary_images/' . $this->id . '/image.jpg');
     }
 }
