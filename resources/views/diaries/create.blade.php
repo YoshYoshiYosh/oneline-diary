@@ -42,13 +42,26 @@
 
         // 画像ファイルをBase64に変換
         imageInput.addEventListener('change', function(event) {
+            // 以前のプレビューがあれば削除
+            const imgPreview = document.getElementById('image-preview')
+            if (imgPreview) {
+                imgPreview.remove()
+            }
+            
             const file = event.target.files[0]
             if (file) {
                 const reader = new FileReader()
                 reader.onload = function(e) {
                     imageBase64Input.value = e.target.result
-                    console.log('imageBase64Input')
-                    console.log(imageBase64Input)
+
+                    // プレビュー用の要素を作成
+                    const imgPreview = document.createElement('img')
+                    imgPreview.id = 'image-preview'
+                    imgPreview.src = e.target.result
+                    imgPreview.style.width = '100px'
+                    imgPreview.style.marginTop = '10px'
+                    imgPreview.style.marginButtom = '10px'
+                    imageInput.parentNode.insertBefore(imgPreview, imageInput.nextSibling)
                 }
                 reader.readAsDataURL(file)
             }
@@ -58,6 +71,13 @@
         removeImageButton.addEventListener('click', function() {
             imageBase64Input.value = ''
             imageInput.value = ''
+
+            // プレビューを削除
+            const imgPreview = document.getElementById('image-preview')
+            if (imgPreview) {
+                imgPreview.remove()
+            }
+            
             removeImageButton.classList.remove("d-inline")
             removeImageButton.classList.add("d-none")
         })
@@ -71,6 +91,6 @@
             removeImageButton.classList.remove("d-none")
             removeImageButton.classList.add("d-inline")
         })
-    });
+    })
 </script>
 @endsection
