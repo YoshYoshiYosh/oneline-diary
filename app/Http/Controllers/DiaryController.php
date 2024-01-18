@@ -12,7 +12,7 @@ class DiaryController extends Controller
      */
     public function index()
     {
-        $diaries = Diary::paginate(Diary::PAGINATION_COUNT);
+        $diaries = Diary::whereIsActive(true)->orderBy('created_at', 'desc')->paginate(Diary::PAGINATION_COUNT);
         return view('diaries.index', compact('diaries'));
     }
 
@@ -86,8 +86,18 @@ class DiaryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Diary $diary)
+    public function destroy(Request $request, Diary $diary)
     {
-        //
+        // 削除処理
+        $isSuccessed = $diary->deleteDiary();
+
+        if ($isSuccessed) {
+            $request->session()->flash('success', '日記を削除しました。');
+        } else {
+            $request->session()->flash('error', '日記の削除に失敗しました。');
+        }
+    
+        // 削除後のリダイレクト先
+        return redirect()->route('diaries.index');
     }
 }

@@ -132,5 +132,21 @@ class DiaryTest extends TestCase
         $diary = Diary::first();
         $this->assertFalse(Storage::disk('public')->exists($filePath));
     }
-    
+
+    public function testDeleteDiary()
+    {
+        Storage::fake('public');
+
+        $response = $this->post('/diaries', [
+            'content' => 'test',
+            'imageBase64' => ""
+        ]);
+
+        $diary = Diary::first();
+        $this->assertCount(1, Diary::all());
+
+        $response = $this->delete('/diaries/'. $diary->id);
+
+        $response->assertSessionHas('success', '日記を削除しました。');
+    }
 }

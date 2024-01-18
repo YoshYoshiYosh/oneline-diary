@@ -61,6 +61,28 @@ a.btn-dark-yellow:active {
   border-radius: 100vh;
 }
 
+.btn-dark-red {
+  color: #fff;
+  border: none;
+  background-color: rgb(241, 87, 84);
+  border-radius: 100vh;
+  height: 27.5px;
+}
+
+.btn-dark-red:hover {
+  color: #fff;
+  border: none;
+  background-color: rgb(241, 87, 84);
+  border-radius: 100vh;
+}
+
+.btn-dark-red:active {
+  color: #fff;
+  border: none;
+  background-color: rgb(241, 87, 84);
+  border-radius: 100vh;
+}
+
 .ml-2 {
   margin-left: 1.2rem;
 }
@@ -71,4 +93,8 @@ a.btn-dark-yellow:active {
   cursor: pointer;
   background-color: #f8f9fa;
   border: 1px solid #eef0f2;
+}
+
+.text-underline {
+  text-decoration: underline !important;
 }

@@ -76,6 +76,18 @@ class Diary extends Model
         }
     }
 
+    public function deleteDiary()
+    {
+        try {
+            $this->update(["is_active" => false]);
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Error at deleteDiary: " . $e->getMessage());
+            
+            return false;
+        }
+    }
+
     public function saveImageFile(string $imageBase64)
     {
         $directory = "diary_images/{$this->id}";
