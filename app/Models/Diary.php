@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class Diary extends Model
 {
@@ -16,6 +17,8 @@ class Diary extends Model
         'is_active',
         'content'
     ];
+
+    const PAGINATION_COUNT = 5;
 
     public static function createNewDiary(array $postData)
     {
@@ -51,5 +54,12 @@ class Diary extends Model
         $imageData = base64_decode($imageBase64RemovedMeta);
     
         Storage::disk('public')->put("{$directory}/image.jpg", $imageData);
+    }
+
+    protected $dates = ['created_at', 'updated_at'];
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y/m/d H:i');
     }
 }

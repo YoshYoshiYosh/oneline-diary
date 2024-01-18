@@ -50,4 +50,31 @@ class DiaryTest extends TestCase
         $response->assertSessionHasErrors('content');
         $this->assertCount(0, Diary::all());
     }
+
+    public function testDiaryIndexWithPagination()
+    {
+        Diary::factory()->count(10)->create();
+    
+        $response = $this->get('/diaries');
+    
+        $response->assertStatus(200);
+    
+        // 1ページに表示される日記の数を確認
+        $diariesOnFirstPage = $response->viewData('diaries')->items();
+        $this->assertCount(5, $diariesOnFirstPage);
+    }
+
+    public function testDiaryIndexSecondPage()
+    {
+        Diary::factory()->count(8)->create();
+    
+        // 2ページ目
+        $response = $this->get('/diaries?page=2');
+    
+        $response->assertStatus(200);
+    
+        // 2ページに表示される日記の数を確認
+        $diariesOnSecondPage = $response->viewData('diaries')->items();
+        $this->assertCount(3, $diariesOnSecondPage);
+    }
 }

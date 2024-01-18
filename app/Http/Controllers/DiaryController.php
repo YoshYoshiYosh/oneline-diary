@@ -12,7 +12,8 @@ class DiaryController extends Controller
      */
     public function index()
     {
-        //
+        $diaries = Diary::paginate(Diary::PAGINATION_COUNT);
+        return view('diaries.index', compact('diaries'));
     }
 
     /**
