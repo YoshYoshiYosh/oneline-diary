@@ -13,5 +13,5 @@ use App\Http\Controllers\DiaryController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::redirect('/', '/diaries/create');
 Route::resource('diaries', DiaryController::class);
